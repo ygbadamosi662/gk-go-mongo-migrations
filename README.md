@@ -53,14 +53,14 @@ You can then use the gk commands within your Go code as needed.
 gk init
 ```
 This will scaffold the following structure:
-
+```
 your-project/
 ├── gk_migrate.go
 ├── database/
 │   ├── config.json                 # MongoDB connection + migration config
 │   └── migrations/
 │       └── registry.go            # Auto-registered migrations live here
-
+```
 ### 🧬 Generate a Migration
 To generate a new migration file, use the following command:
 
