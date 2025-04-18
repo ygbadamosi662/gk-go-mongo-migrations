@@ -14,25 +14,40 @@ A lightweight Go-based migration and generator tool for MongoDB-backed projects.
 
 ## 🚀 Installation
 
-### Option 1: Use as a CLI Tool
+You can install `gk` either globally or use it directly within your Go projects.
 
-1. **Install globally**:
+### Option 1: Install Globally (Recommended)
 
-   Ensure your `$GOPATH/bin` is in your `$PATH` to run `gk` globally.
+To install `gk` as a global command-line tool, run the following command:
 
 ```bash
 go install github.com/ygbadamosi662/gk-go-mongo-migrations/cmd/gk@latest
 ```
-This will install gk and make it available as a global CLI tool.
+This will install the gk tool and make it available globally on your system, allowing you to run the gk commands from anywhere.
 
-Option 2: Use in Go Projects
-You can also import gk in your own Go apps if needed:
+Note: Ensure that $GOPATH/bin or $GOBIN is in your system's $PATH to use gk globally.
+
+### Option 2: Install Using go get
+Alternatively, you can use go get to install the tool. This will download the latest version and install it globally if $GOPATH/bin or $GOBIN is in your $PATH.
+
+```bash
+go get github.com/ygbadamosi662/gk-go-mongo-migrations/cmd/gk@latest
+```
+This command will fetch and install the latest version of gk.
+
+Note: Ensure that $GOPATH/bin (or $GOBIN) is in your $PATH so that you can run gk globally.
+
+### Option 3: Use in Go Projects
+If you want to use gk as part of your Go project without installing it globally, you can import it directly into your code:
 
 ```go
-import "github.com/ygbadamosi662/gk-go-mongo-migrations/cmd/gk"
+import "github.com/ygbadamosi662/gk-go-mongo-migrations"
 ```
-🧱 Project Scaffolding
-To initialize a new project structure, run:
+You can then use the gk commands within your Go code as needed.
+
+
+## 🧱 Project Scaffolding
+### To initialize a new project structure, run:
 
 ```bash
 gk init
@@ -46,7 +61,7 @@ your-project/
 │   └── migrations/
 │       └── registry.go            # Auto-registered migrations live here
 
-## 🧬 Generate a Migration
+### 🧬 Generate a Migration
 To generate a new migration file, use the following command:
 
 ```bash
@@ -80,7 +95,7 @@ func Up(db *mongo.Database) error {
 ```
 You only need to implement the logic inside the Up() function to perform your migration.
 
-⚡ Running Migrations
+## ⚡ Running Migrations
 Your database/config.json file should look like this:
 
 ```json
@@ -118,7 +133,7 @@ func Up(db *mongo.Database) error {
 	return err
 }
 ```
-🧩 How It Works
+## 🧩 How It Works
 All generated migration files auto-register themselves inside the global Registry map.
 
 registry.go imports these files, ensuring they are registered at runtime.
