@@ -12,27 +12,23 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-// Config holds the database connection and migration collection information
 type Config struct {
 	MongoURL                    string `json:"mongo_url"`
 	DBName                      string `json:"db_name"`
 	AppliedMigrationsCollection string `json:"applied_migrations_collection"`
 }
 
-// Migration represents the structure of each migration file
 type Migration struct {
 	FileName string
 	Up       func(db *mongo.Database) error
 }
 
 func RunMigrations(registry map[string]MigrationFunc) error {
-	// Load database connection information from config.json
 	config, err := loadConfig()
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	// Connect to MongoDB
 	client, err := mongo.Connect(options.Client().
 		ApplyURI(config.MongoURL))
 	if err != nil {
@@ -42,29 +38,23 @@ func RunMigrations(registry map[string]MigrationFunc) error {
 
 	db := client.Database(config.DBName)
 
-	// Create applied_migrations collection if it doesn't exist
 	err = createAppliedMigrationsCollectionIfNotExists(db, config.AppliedMigrationsCollection)
 	if err != nil {
 		return fmt.Errorf("failed to create applied migrations collection: %w", err)
 	}
 
-	// Get the applied migrations from the database
 	appliedMigrations, err := getAppliedMigrations(db, config.AppliedMigrationsCollection)
 	if err != nil {
 		return fmt.Errorf("failed to get applied migrations: %w", err)
 	}
 
-	// Iterate over migration files and apply any pending ones
 	for migrationKey, migrationFunc := range registry {
-		// If the migration file has not been applied yet
 		if !isMigrationApplied(appliedMigrations, migrationKey) {
-			// Run the migration function for each registered migration
 			err := migrationFunc(db)
 			if err != nil {
 				return fmt.Errorf("error applying migration %s: %w", migrationKey, err)
 			}
 
-			// Mark the migration as applied
 			err = markMigrationAsApplied(db, config.AppliedMigrationsCollection, migrationKey)
 			if err != nil {
 				return fmt.Errorf("failed to mark migration %s as applied: %w", migrationKey, err)
@@ -72,11 +62,10 @@ func RunMigrations(registry map[string]MigrationFunc) error {
 		}
 	}
 
-	return nil // Success
+	return nil
 }
 
 func loadConfig() (*Config, error) {
-	// Read the configuration from database/config.json
 	configFile, err := os.Open("database/config.json")
 	if err != nil {
 		return nil, fmt.Errorf("error opening config file: %w", err)
@@ -93,20 +82,17 @@ func loadConfig() (*Config, error) {
 }
 
 func createAppliedMigrationsCollectionIfNotExists(db *mongo.Database, collectionName string) error {
-	// Check if the applied_migrations collection exists
 	collections, err := db.ListCollectionNames(context.Background(), bson.D{})
 	if err != nil {
 		return fmt.Errorf("error listing collections: %w", err)
 	}
 
-	// If the applied_migrations collection does not exist, create it
 	for _, collection := range collections {
 		if collection == collectionName {
-			return nil // Collection already exists
+			return nil
 		}
 	}
 
-	// Create the applied_migrations collection (optionally with a unique index on the filename)
 	validator := bson.M{
 		"$jsonSchema": bson.M{
 			"bsonType": "object",
@@ -147,7 +133,6 @@ func createAppliedMigrationsCollectionIfNotExists(db *mongo.Database, collection
 }
 
 func getAppliedMigrations(db *mongo.Database, collectionName string) (map[string]struct{}, error) {
-	// Get the applied migrations from the applied_migrations collection
 	collection := db.Collection(collectionName)
 	cursor, err := collection.Find(context.Background(), bson.D{})
 	if err != nil {
@@ -179,7 +164,6 @@ func isMigrationApplied(appliedMigrations map[string]struct{}, migrationFile str
 }
 
 func markMigrationAsApplied(db *mongo.Database, collectionName string, migrationFile string) error {
-	// Mark the migration as applied by inserting its name into the applied_migrations collection
 	collection := db.Collection(collectionName)
 	_, err := collection.InsertOne(context.Background(), bson.D{
 		{Key: "migration", Value: migrationFile}, {Key: "applied_at", Value: time.Now()},

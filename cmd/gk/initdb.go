@@ -18,44 +18,37 @@ type Config struct {
 }
 
 func InitDB() {
-	// Get the root project directory
 	projectRoot, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Error getting project directory: %v", err)
 	}
 
-	// Define the migrations directory and config file path
 	migrationsDir := util.JoinPaths(projectRoot, "database", "migrations")
 	configFilePath := util.JoinPaths(projectRoot, "database", "config.json")
 
-	// Create the migrations directory if it doesn't exist
 	if err := util.CreateDirIfNotExist(migrationsDir); err != nil {
 		log.Fatalf("Error creating migrations directory: %v", err)
 	}
 
-	// Check if the config file already exists
 	if util.FileExists(configFilePath) {
 		log.Println("Config file already exists, skipping creation.")
 		return
 	}
 
-	// Create a new config structure with default values
 	config := Config{
-		MongoURL:                    "mongodb://username:password@localhost:27017", // Replace with default or user input
-		DBName:                      "testdb",                                      // Replace with default or user input
-		AppliedMigrationsCollection: "migrations",                                  // Default collection name
+		MongoURL:                    "mongodb://username:password@localhost:27017",
+		DBName:                      "testdb",
+		AppliedMigrationsCollection: "migrations",
 	}
 
-	// Create the config file
 	file, err := os.Create(configFilePath)
 	if err != nil {
 		log.Fatalf("Error creating config file: %v", err)
 	}
 	defer file.Close()
 
-	// Marshal the config struct to JSON and write to the file
 	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ") // For pretty printing
+	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(config); err != nil {
 		log.Fatalf("Error writing to config file: %v", err)
 	}
@@ -69,7 +62,6 @@ func InitDB() {
 func createRegistry() {
 	registryFile := "database/migrations/registry.go"
 
-	// Create registry.go if it doesn't exist
 	if _, err := os.Stat(registryFile); os.IsNotExist(err) {
 		registryContent := `package migrations
 
