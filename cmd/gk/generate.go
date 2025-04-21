@@ -11,6 +11,7 @@ import (
 
 func Generate(description string) {
 	timestamp := time.Now().Format("20060102150405.000")
+	migrationUpName := fmt.Sprintf("%s_%s", timestamp, description)
 	migrationFileName := fmt.Sprintf("%s_%s.go", timestamp, description)
 	registrationKey := fmt.Sprintf("%s_%s.go", timestamp, description)
 
@@ -37,16 +38,16 @@ import (
 )
 
 func init() {
-	Registry["%s"] = Up
+	Registry["%s"] = Up_%s
 }
 
-func Up(db *mongo.Database) error {
+func Up_%s(db *mongo.Database) error {
 	log.Println("Running %s migration")
 
 	// Write your migration logic here
 	return nil
 }
-`, registrationKey, registrationKey)
+`, registrationKey, migrationUpName, migrationUpName, registrationKey)
 
 	if _, err := file.Write([]byte(migrationTemplate)); err != nil {
 		log.Fatalf("Failed to write to migration file: %v", err)
