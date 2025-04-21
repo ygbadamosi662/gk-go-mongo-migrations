@@ -84,11 +84,11 @@ import (
 )
 
 func init() {
-	Registry["20250418142926.535_add_address.go"] = Up
+	Registry["20250418142926_535_add_address.go"] = Up_0250418142926_535_add_address
 }
 
-func Up(db *mongo.Database) error {
-	log.Println("Running 20250418142926.535_add_address.go migration")
+func Up_0250418142926_535_add_address(db *mongo.Database) error {
+	log.Println("Running 20250418142926_535_add_address.go migration")
 	// Add your logic here
 	return nil
 }
