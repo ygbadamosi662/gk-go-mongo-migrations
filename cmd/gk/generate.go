@@ -10,7 +10,7 @@ import (
 )
 
 func Generate(description string) {
-	timestamp := time.Now().Format("20060102150405.000")
+	timestamp := time.Now().Format("20060102150405_000")
 	migrationUpName := fmt.Sprintf("%s_%s", timestamp, description)
 	migrationFileName := fmt.Sprintf("%s_%s.go", timestamp, description)
 	registrationKey := fmt.Sprintf("%s_%s.go", timestamp, description)
