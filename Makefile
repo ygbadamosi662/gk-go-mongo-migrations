@@ -22,7 +22,7 @@ init:
 	go run ./$(CMD_DIR) init
 
 generate:
-	go run ./$(CMD_DIR) generate name=$(name)
+	go run ./$(CMD_DIR) generate $(name)
 
 # === VERSIONING ===
 

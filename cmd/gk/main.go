@@ -7,7 +7,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "migrate",
+	Use:   "gk",
 	Short: "MongoDB migration manager",
 }
 
